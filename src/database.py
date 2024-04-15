@@ -22,7 +22,7 @@ def create_tables():
     conn.close()
 
 
-def insert_user(person):
+def insert_guests(person):
     cursor.execute(
         """
         INSERT INTO guests (gender, title, first_name, last_name, street_number, street_name, 

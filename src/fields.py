@@ -185,7 +185,6 @@ database_table_payments = """
         ); 
     """
 
-
 database_table_guest_reviews = """
         CREATE TABLE IF NOT EXISTS guest_reviews (
             review_id INTEGER PRIMARY KEY AUTOINCREMENT,
