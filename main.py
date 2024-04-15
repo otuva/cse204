@@ -46,7 +46,7 @@ def insert_csv(people):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for person in people:
-            person_data = fields.person_data
+            person_data = fields.person_data(person)
             writer.writerow(person_data)
 
 
