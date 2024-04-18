@@ -2,7 +2,7 @@ hotels = [
     {
         "name": "Hampton Inn Madison Square Garden Area Hotel",
         "address": {
-            "street_number": 123,
+            "street_number": 151,
             "street_name": "Madison Square Garden Area",
             "city": "Hampton",
             "state": "MA",
@@ -16,7 +16,7 @@ hotels = [
     {
         "name": "Westin New York Times Square",
         "address": {
-            "street_number": 100,
+            "street_number": 422,
             "street_name": "New York Times Square",
             "city": "Westin",
             "state": "NY",
@@ -30,7 +30,7 @@ hotels = [
     {
         "name": "Pickwick Arms Hotel",
         "address": {
-            "street_number": 42,
+            "street_number": 8,
             "street_name": "Pickwick Arms",
             "city": "Pickwick",
             "state": "Hamburg",
@@ -44,7 +44,7 @@ hotels = [
     {
         "name": "Courtyard By Marriott",
         "address": {
-            "street_number": 123,
+            "street_number": 30,
             "street_name": "By Marriott",
             "city": "Courtyard",
             "state": "MA",
@@ -58,7 +58,7 @@ hotels = [
     {
         "name": "Latham Hotel",
         "address": {
-            "street_number": 123,
+            "street_number": 78,
             "street_name": "Latham",
             "city": "Latham",
             "state": "Saxony",
@@ -158,7 +158,6 @@ reviews = [
         "review_text": "The location was great and the bed was comfortable, but the constant construction noise, lackluster breakfast, and unresponsive staff left a lot to be desired.",
     },
 ]
-
 
 # random number
 
