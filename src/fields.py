@@ -124,7 +124,7 @@ database_table_hotels = """
             postcode TEXT,
             phone TEXT,
             email TEXT,
-            website TEXT 
+            website TEXT
         );
     """
 
@@ -178,7 +178,7 @@ database_table_payments = """
             payment_date DATE NOT NULL,
             payment_type_id INTEGER NOT NULL,
             amount DECIMAL(8,2),
-            transaction_id TEXT,  
+            transaction_id INTEGER,  
             notes TEXT,          
             FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
             FOREIGN KEY (payment_type_id) REFERENCES payment_types(payment_type_id) 
