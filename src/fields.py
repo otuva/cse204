@@ -44,7 +44,6 @@ hotel_fieldnames = [
     "hotel_postcode ",
     "hotel_email",
     "hotel_phone",
-    "hotel_cell",
     "hotel_website",
     "room_number",
     "room_type",
@@ -104,6 +103,38 @@ def person_data(person):
         "picture_medium": person["picture"]["medium"],
         "picture_thumbnail": person["picture"]["thumbnail"],
         "nationality": person["nat"],
+    }
+
+
+def hotel_data(hotel, room_number, room_type, payment_type, review):
+    return {
+        "hotel_name": hotel["name"],
+        "hotel_street_number": hotel["address"]["street_number"],
+        "hotel_street_name": hotel["address"]["street_name"],
+        "hotel_city": hotel["address"]["city"],
+        "hotel_state": hotel["address"]["state"],
+        "hotel_country": hotel["address"]["country"],
+        "hotel_postcode ": hotel["address"]["postcode"],
+        "hotel_email": hotel["email"],
+        "hotel_phone": hotel["phone"],
+        "hotel_website": hotel["website"],
+        "room_number": room_number,
+        "room_type": room_type["room_type_name"],
+        "room_type_description": room_type["description"],
+        "room_capacity": room_type["capacity"],
+        "room_nightly_rate": room_type["nightly_rate"],
+        "reservation_start_date": "2024-04-01",  # update
+        "reservation_end_date": "2024-04-02",  # update
+        "reservation_total_cost": room_type["nightly_rate"],
+        "payment_date": "2024-04-01",  # update
+        "payment_type": payment_type,  # update
+        "payment_amount": 0,  # update
+        "transaction_id": "000000",  # update
+        "payment_notes": "Lorem ipsum",  # update
+        "rating": review["rating"],
+        "review_title": review["review_title"],
+        "review_text": review["review_text"],
+        "review_date": "2024-04-01",  # update
     }
 
 
@@ -188,7 +219,6 @@ database_table_reservations = """
             room_id INTEGER NOT NULL,
             start_date DATE NOT NULL,
             end_date DATE NOT NULL,
-            total_cost DECIMAL(8,2),
             FOREIGN KEY (guest_id) REFERENCES guests(guest_id),
             FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id),
             FOREIGN KEY (room_id) REFERENCES rooms(room_id)
