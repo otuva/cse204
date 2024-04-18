@@ -1,6 +1,7 @@
 import sqlite3
 
 from src import fields
+from src import unnormalized
 
 DATABASE = "hotel.db"
 
@@ -22,7 +23,10 @@ def create_tables():
     conn.close()
 
 
-def insert_guests(person):
+def insert_guest(person):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    
     cursor.execute(
         """
         INSERT INTO guests (gender, title, first_name, last_name, street_number, street_name, 
@@ -71,3 +75,9 @@ def insert_guests(person):
 
     conn.commit()
     conn.close()
+
+def insert_from_csv():
+    people =  unnormalized.get_from_csv()
+    for person in people:
+        # insert_guest(person)
+        print(person)

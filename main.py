@@ -37,7 +37,7 @@ def main():
     elif args.create_database:
         database.create_tables()
     elif args.insert_database:
-        unnormalized.get_from_csv()
+        database.insert_from_csv()
     elif args.create_view:
         print("create_view")
     else:
