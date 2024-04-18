@@ -1,4 +1,4 @@
-fieldnames = [
+person_fieldnames = [
     "gender",
     "title",
     "first",
@@ -33,6 +33,40 @@ fieldnames = [
     "picture_thumbnail",
     "nationality",
 ]
+
+hotel_fieldnames = [
+    "hotel_name",
+    "hotel_street_number",
+    "hotel_street_name",
+    "hotel_city",
+    "hotel_state",
+    "hotel_country",
+    "hotel_postcode ",
+    "hotel_email",
+    "hotel_phone",
+    "hotel_cell",
+    "hotel_website",
+    "room_number",
+    "room_type",
+    "room_type_description",
+    "room_capacity",
+    "room_nightly_rate",
+    "reservation_start_date",
+    "reservation_end_date",
+    "reservation_total_cost",
+    "payment_date",
+    "payment_type",
+    "payment_amount",
+    "transaction_id",
+    "payment_notes",
+    "rating",
+    "review_title",
+    "review_text",
+    "review_date",
+]
+
+
+fieldnames = person_fieldnames + hotel_fieldnames
 
 
 def person_data(person):
@@ -73,13 +107,9 @@ def person_data(person):
     }
 
 
-database_table_guests = """
-        CREATE TABLE IF NOT EXISTS guests (
-            guest_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-            gender TEXT,
-            title TEXT,
-            first_name TEXT,
-            last_name TEXT,
+database_table_addresses = """
+        CREATE TABLE IF NOT EXISTS addresses (
+            address_id INTEGER PRIMARY KEY AUTOINCREMENT,
             street_number INTEGER,
             street_name TEXT,
             city TEXT,
@@ -89,26 +119,33 @@ database_table_guests = """
             latitude TEXT,
             longitude TEXT,
             timezone_offset TEXT,
-            timezone_description TEXT,
+            timezone_description TEXT
+    );
+    """
+
+database_table_contacts = """
+        CREATE TABLE IF NOT EXISTS contacts (
+            contact_id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT,
-            uuid TEXT,
-            username TEXT,
-            password TEXT,
-            salt TEXT,
-            md5 TEXT,
-            sha1 TEXT, 
-            sha256 TEXT,
-            date_of_birth TEXT,
-            age INTEGER,
-            registration_date TEXT, 
             phone TEXT,
             cell TEXT,
+            website TEXT
+        );
+    """
+
+database_table_guests = """
+        CREATE TABLE IF NOT EXISTS guests (
+            guest_id INTEGER PRIMARY KEY AUTOINCREMENT,  
+            gender TEXT,
+            title TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            date_of_birth TEXT,
             id_name TEXT,
             id_value TEXT,
-            picture_large TEXT,
-            picture_medium TEXT,
-            picture_thumbnail TEXT,
             nationality TEXT
+            address_id INTEGER,
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
         );
     """
 
@@ -116,15 +153,9 @@ database_table_hotels = """
         CREATE TABLE IF NOT EXISTS hotels (
             hotel_id INTEGER PRIMARY KEY AUTOINCREMENT,
             hotel_name TEXT NOT NULL,
-            street_number INTEGER,
-            street_name TEXT,
-            city TEXT,
-            state TEXT,
-            country TEXT,
-            postcode TEXT,
-            phone TEXT,
-            email TEXT,
-            website TEXT
+
+            address_id INTEGER,
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
         );
     """
 
