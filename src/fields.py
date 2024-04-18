@@ -125,7 +125,7 @@ def hotel_data(hotel, room_number, room_type, payment_type, review):
         "room_nightly_rate": room_type["nightly_rate"],
         "reservation_start_date": "2024-04-01",  # update
         "reservation_end_date": "2024-04-02",  # update
-        "reservation_total_cost": room_type["nightly_rate"],
+        "reservation_total_cost": room_type["nightly_rate"], # update
         "payment_date": "2024-04-01",  # update
         "payment_type": payment_type,  # update
         "payment_amount": 0,  # update
