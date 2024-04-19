@@ -183,12 +183,14 @@ database_table_guests = """
             title TEXT,
             first_name TEXT,
             last_name TEXT,
+            contact_id INTEGER,
+            address_id INTEGER,
             date_of_birth TEXT,
             id_name TEXT,
             id_value TEXT,
-            nationality TEXT
-            address_id INTEGER,
-            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
+            nationality TEXT,
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+            FOREIGN KEY (contact_id) REFERENCES contacts(contact_id)
         );
     """
 
@@ -196,9 +198,10 @@ database_table_hotels = """
         CREATE TABLE IF NOT EXISTS hotels (
             hotel_id INTEGER PRIMARY KEY AUTOINCREMENT,
             hotel_name TEXT NOT NULL,
-
+            contact_id INTEGER,
             address_id INTEGER,
-            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+            FOREIGN KEY (contact_id) REFERENCES contacts(contact_id)
         );
     """
 
