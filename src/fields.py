@@ -14,23 +14,23 @@ person_fieldnames = [
     "timezone_offset",
     "timezone_description",
     "email",
-    "uuid",
-    "username",
-    "password",
-    "salt",
-    "md5",
-    "sha1",
-    "sha256",
+    # "uuid",
+    # "username",
+    # "password",
+    # "salt",
+    # "md5",
+    # "sha1",
+    # "sha256",
     "dob_date",
     "dob_age",
-    "registered_date",
+    # "registered_date",
     "phone",
     "cell",
     "id_name",
     "id_value",
-    "picture_large",
-    "picture_medium",
-    "picture_thumbnail",
+    # "picture_large",
+    # "picture_medium",
+    # "picture_thumbnail",
     "nationality",
 ]
 
@@ -85,28 +85,40 @@ def person_data(person):
         "timezone_offset": person["location"]["timezone"]["offset"],
         "timezone_description": person["location"]["timezone"]["description"],
         "email": person["email"],
-        "uuid": person["login"]["uuid"],
-        "username": person["login"]["username"],
-        "password": person["login"]["password"],
-        "salt": person["login"]["salt"],
-        "md5": person["login"]["md5"],
-        "sha1": person["login"]["sha1"],
-        "sha256": person["login"]["sha256"],
+        # "uuid": person["login"]["uuid"],
+        # "username": person["login"]["username"],
+        # "password": person["login"]["password"],
+        # "salt": person["login"]["salt"],
+        # "md5": person["login"]["md5"],
+        # "sha1": person["login"]["sha1"],
+        # "sha256": person["login"]["sha256"],
         "dob_date": person["dob"]["date"],
         "dob_age": person["dob"]["age"],
-        "registered_date": person["registered"]["date"],
+        # "registered_date": person["registered"]["date"],
         "phone": person["phone"],
         "cell": person["cell"],
         "id_name": person["id"]["name"],
         "id_value": person["id"]["value"],
-        "picture_large": person["picture"]["large"],
-        "picture_medium": person["picture"]["medium"],
-        "picture_thumbnail": person["picture"]["thumbnail"],
+        # "picture_large": person["picture"]["large"],
+        # "picture_medium": person["picture"]["medium"],
+        # "picture_thumbnail": person["picture"]["thumbnail"],
         "nationality": person["nat"],
     }
 
 
-def hotel_data(hotel, room_number, room_type, payment_type, review):
+def hotel_data(
+    hotel,
+    room_number,
+    room_type,
+    payment_type,
+    review,
+    transaction_id,
+    start_date,
+    end_date,
+    review_date,
+    reservation_total_cost,
+    payment_amount,
+):
     return {
         "hotel_name": hotel["name"],
         "hotel_street_number": hotel["address"]["street_number"],
@@ -123,18 +135,18 @@ def hotel_data(hotel, room_number, room_type, payment_type, review):
         "room_type_description": room_type["description"],
         "room_capacity": room_type["capacity"],
         "room_nightly_rate": room_type["nightly_rate"],
-        "reservation_start_date": "2024-04-01",  # update
-        "reservation_end_date": "2024-04-02",  # update
-        "reservation_total_cost": room_type["nightly_rate"], # update
-        "payment_date": "2024-04-01",  # update
-        "payment_type": payment_type,  # update
-        "payment_amount": 0,  # update
-        "transaction_id": "000000",  # update
-        "payment_notes": "Lorem ipsum",  # update
+        "reservation_start_date": start_date,
+        "reservation_end_date": end_date,
+        "reservation_total_cost": reservation_total_cost,
+        "payment_date": start_date,
+        "payment_type": payment_type,
+        "payment_amount": payment_amount,
+        "transaction_id": transaction_id,
+        "payment_notes": "",
         "rating": review["rating"],
         "review_title": review["review_title"],
         "review_text": review["review_text"],
-        "review_date": "2024-04-01",  # update
+        "review_date": review_date,
     }
 
 
