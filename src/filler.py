@@ -88,19 +88,19 @@ room_types = [
         "room_type_name": "Suite",
         "description": "Luxurious suite with separate living area",
         "capacity": 4,
-        "nightly_rate": 250.00,
+        "nightly_rate": 243.00,
     },
     {
         "room_type_name": "Family Room",
         "description": "Spacious accommodations for the whole family, may include bunk beds or connecting rooms",
         "capacity": 5,
-        "nightly_rate": 150.00,
+        "nightly_rate": 156.00,
     },
     {
         "room_type_name": "Presidential Suite",
         "description": "The ultimate in luxury, with multiple bedrooms, living areas, and premium amenities",
         "capacity": 6,
-        "nightly_rate": 1000.00,
+        "nightly_rate": 758.00,
     },
 ]
 
