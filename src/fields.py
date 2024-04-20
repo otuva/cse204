@@ -163,7 +163,7 @@ database_table_addresses = """
             longitude TEXT,
             timezone_offset TEXT,
             timezone_description TEXT
-    );
+        );
     """
 
 database_table_guests = """
@@ -180,7 +180,7 @@ database_table_guests = """
             id_name TEXT,
             id_value TEXT,
             nationality TEXT,
-            FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
         );
     """
 
@@ -192,7 +192,7 @@ database_table_hotels = """
             email TEXT,
             phone TEXT,
             website TEXT,
-            FOREIGN KEY (address_id) REFERENCES addresses(address_id),
+            FOREIGN KEY (address_id) REFERENCES addresses(address_id)
         );
     """
 
@@ -244,7 +244,7 @@ database_table_payments = """
             reservation_id INTEGER NOT NULL,
             payment_date DATE NOT NULL,
             payment_type_id INTEGER NOT NULL,
-            amount DECIMAL(8,2),
+            payment_amount DECIMAL(8,2),
             transaction_id INTEGER,  
             notes TEXT,          
             FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
@@ -257,7 +257,7 @@ database_table_guest_reviews = """
             review_id INTEGER PRIMARY KEY AUTOINCREMENT,
             guest_id INTEGER NOT NULL,
             hotel_id INTEGER NOT NULL,
-            rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+            rating INTEGER,
             review_title TEXT,
             review_text TEXT,
             review_date DATE NOT NULL,
@@ -318,4 +318,107 @@ database_unnormalized_form = """
             review_text TEXT,
             review_date TEXT
         );
+    """
+
+database_3nf_addresses = """
+        INSERT INTO addresses (street_number, street_name, city, state, country, postcode, latitude, longitude, timezone_offset, timezone_description)
+        SELECT DISTINCT street_number, street_name, city, state, country, postcode, latitude, longitude, timezone_offset, timezone_description
+        FROM unnormalized_form
+        WHERE street_number IS NOT NULL AND street_name IS NOT NULL;
+    """
+
+database_3nf_hotel_addresses = """
+        INSERT INTO addresses (street_number, street_name, city, state, country, postcode)
+        SELECT DISTINCT hotel_street_number, hotel_street_name, hotel_city, hotel_state, hotel_country, hotel_postcode
+        FROM unnormalized_form
+        WHERE hotel_street_number IS NOT NULL AND hotel_street_name IS NOT NULL;
+    """
+
+# gender, title
+database_3nf_guests = """
+        INSERT INTO guests (gender, title, first_name, last_name, email, phone, address_id, date_of_birth, id_name, id_value, nationality)
+        SELECT DISTINCT gender, title, first, last, email, phone, 
+            (SELECT address_id FROM addresses WHERE street_number = unnormalized_form.street_number AND street_name = unnormalized_form.street_name LIMIT 1),
+            dob_date, id_name, id_value, nationality
+        FROM unnormalized_form
+        WHERE email IS NOT NULL;
+    """
+
+database_3nf_hotels = """
+        INSERT INTO hotels (hotel_name, address_id, email, phone, website)
+        SELECT DISTINCT hotel_name, 
+            (SELECT address_id FROM addresses WHERE street_number = unnormalized_form.hotel_street_number AND street_name = unnormalized_form.hotel_street_name LIMIT 1),
+            hotel_email, hotel_phone, hotel_website
+        FROM unnormalized_form
+        WHERE hotel_name IS NOT NULL;
+    """
+
+database_3nf_room_types = """
+        INSERT INTO room_types (room_type_name, description, capacity, nightly_rate)
+        SELECT DISTINCT room_type, room_type_description, room_capacity, room_nightly_rate
+        FROM unnormalized_form
+        WHERE room_type IS NOT NULL;
+    """
+
+database_3nf_rooms = """
+        INSERT INTO rooms (hotel_id, room_number, room_type_id)
+        SELECT DISTINCT 
+            (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1), 
+            room_number, 
+            (SELECT room_type_id FROM room_types WHERE room_type_name = unnormalized_form.room_type LIMIT 1)
+        FROM unnormalized_form
+        WHERE room_number IS NOT NULL AND hotel_name IS NOT NULL AND room_type IS NOT NULL;
+    """
+
+database_3nf_reservations = """
+        INSERT INTO reservations (guest_id, hotel_id, room_id, start_date, end_date)
+        SELECT DISTINCT 
+            (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1), 
+            (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1),
+            (SELECT room_id FROM rooms WHERE room_number = unnormalized_form.room_number AND hotel_id = (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1) LIMIT 1),
+            reservation_start_date, reservation_end_date
+        FROM unnormalized_form
+        WHERE email IS NOT NULL AND hotel_name IS NOT NULL AND room_number IS NOT NULL;
+    """
+
+database_3nf_payment_types = """
+        INSERT INTO payment_types (payment_type_name)
+        SELECT DISTINCT payment_type
+        FROM unnormalized_form
+        WHERE payment_type IS NOT NULL;
+    """
+
+database_3nf_payments = """
+        INSERT INTO payments (reservation_id, payment_date, payment_type_id, payment_amount, transaction_id, notes)
+        SELECT DISTINCT 
+            (SELECT reservation_id FROM reservations 
+                WHERE guest_id = (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1) 
+                AND room_id = (SELECT room_id FROM rooms WHERE room_number = unnormalized_form.room_number LIMIT 1) 
+                AND start_date = unnormalized_form.reservation_start_date 
+                LIMIT 1),
+            payment_date, 
+            (SELECT payment_type_id FROM payment_types WHERE payment_type_name = unnormalized_form.payment_type LIMIT 1),
+            payment_amount,
+            transaction_id,
+            payment_notes
+        FROM unnormalized_form
+        WHERE payment_date IS NOT NULL AND payment_type IS NOT NULL AND payment_amount IS NOT NULL;
+    """
+
+database_3nf_guest_reviews = """
+        INSERT INTO guest_reviews (guest_id, hotel_id, rating, review_title, review_text, review_date)
+        SELECT DISTINCT 
+            (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1),
+            (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1),
+            rating, 
+            review_title,
+            review_text,
+            review_date
+        FROM unnormalized_form
+        WHERE email IS NOT NULL 
+            AND hotel_name IS NOT NULL 
+            AND rating IS NOT NULL 
+            AND review_title IS NOT NULL 
+            AND review_text IS NOT NULL
+            AND review_date IS NOT NULL;
     """
