@@ -11,7 +11,6 @@ def create_tables():
     cursor = conn.cursor()
 
     cursor.execute(fields.database_table_addresses)
-    cursor.execute(fields.database_table_contacts)
     cursor.execute(fields.database_table_guests)
     cursor.execute(fields.database_table_hotels)
     cursor.execute(fields.database_table_room_types)
@@ -41,6 +40,25 @@ def insert_unnormalized_form(row):
         """,
         tuple(row.values()),
     )
+
+    conn.commit()
+    conn.close()
+
+
+def normalize():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(fields.database_3nf_addresses)
+    cursor.execute(fields.database_3nf_hotel_addresses)
+    cursor.execute(fields.database_3nf_guests)
+    cursor.execute(fields.database_3nf_hotels)
+    cursor.execute(fields.database_3nf_room_types)
+    cursor.execute(fields.database_3nf_rooms)
+    cursor.execute(fields.database_3nf_reservations)
+    cursor.execute(fields.database_3nf_payment_types)
+    cursor.execute(fields.database_3nf_payments)
+    cursor.execute(fields.database_3nf_guest_reviews)
 
     conn.commit()
     conn.close()
