@@ -91,6 +91,7 @@ def create_csv_file():
 def get_from_csv():
     with open(FILENAME, newline="") as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=fields.fieldnames)
+        next(reader) # skip header
         people = [row for row in reader]
     return people
 
