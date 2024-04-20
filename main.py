@@ -23,6 +23,11 @@ parser.add_argument(
     help="Fetch data and insert into the database",
 )
 parser.add_argument(
+    "--normalize-tables",
+    action="store_true",
+    help="Normalize tables to 3NF"
+)
+parser.add_argument(
     "--create-view",
     action="store_true",
     help="Create a database view (define the view logic separately)",
@@ -38,6 +43,8 @@ def main():
         database.create_tables()
     elif args.insert_database:
         database.insert_from_csv()
+    elif args.normalize_tables:
+        database.normalize()
     elif args.create_view:
         print("create_view")
     else:
