@@ -46,7 +46,7 @@ def main():
     elif args.normalize_tables:
         database.normalize()
     elif args.create_view:
-        print("create_view")
+        database.create_view()
     else:
         parser.print_help()
 
