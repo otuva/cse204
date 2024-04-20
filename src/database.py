@@ -63,6 +63,14 @@ def normalize():
     conn.commit()
     conn.close()
 
+def create_view():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(fields.database_unnormalized_form_view)
+
+    conn.commit()
+    conn.close()
 
 def insert_from_csv():
     people = unnormalized.get_from_csv()
