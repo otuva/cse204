@@ -257,7 +257,7 @@ database_table_guest_reviews = """
             review_id INTEGER PRIMARY KEY AUTOINCREMENT,
             guest_id INTEGER NOT NULL,
             hotel_id INTEGER NOT NULL,
-            rating INTEGER,
+            rating INTEGER CHECK (rating >= 1 AND rating <= 5),
             review_title TEXT,
             review_text TEXT,
             review_date DATE NOT NULL,
