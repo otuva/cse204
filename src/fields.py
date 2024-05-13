@@ -150,6 +150,10 @@ def hotel_data(
     }
 
 
+# ---------------------------------------------
+# ---------------database-tables---------------
+# ---------------------------------------------
+
 database_table_addresses = """
         CREATE TABLE IF NOT EXISTS addresses (
             address_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -266,6 +270,10 @@ database_table_guest_reviews = """
         );
     """
 
+# ------------------------------------
+# ------------database-raw------------
+# ------------------------------------
+
 database_unnormalized_form = """
         CREATE TABLE IF NOT EXISTS unnormalized_form (
             gender TEXT,
@@ -318,6 +326,10 @@ database_unnormalized_form = """
             review_date TEXT
         );
     """
+
+# ---------------------------------------------------------
+# -------------------database-tables-3nf-------------------
+# ---------------------------------------------------------
 
 database_3nf_addresses = """
         INSERT INTO addresses (street_number, street_name, city, state, country, postcode, latitude, longitude, timezone_offset, timezone_description)
@@ -421,6 +433,10 @@ database_3nf_guest_reviews = """
             AND review_text IS NOT NULL
             AND review_date IS NOT NULL;
     """
+
+# ------------------------------------------------------------------
+# ----------------------database-original-view----------------------
+# ------------------------------------------------------------------
 
 database_unnormalized_form_view = """
         CREATE VIEW unnormalized_form_view AS
