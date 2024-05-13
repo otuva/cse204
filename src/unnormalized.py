@@ -30,7 +30,9 @@ def generate_people(total_people):
 def generate_hotel():
     random_hotel = random.choice(filler.hotels)
 
-    random_room_number = random.randint(100, 500)
+    # random_room_number = random.randint(100, 500)
+    
+
     # while random_room_number in existing_rooms:
     #     random_room_number = random.randint(100, 500)
     # existing_rooms.append(random_room_number)
@@ -48,6 +50,9 @@ def generate_hotel():
     transaction_id = random.randint(10000000, 99999999)
 
     random_room_type = random.choice(filler.room_types)
+
+    myrandom = random.Random(random_room_type["room_type_name"] + random_hotel["name"])
+    random_room_number = myrandom.randint(100, 500)
 
     reservation_total_cost = float(random_room_type["nightly_rate"]) * random_days
 
@@ -77,8 +82,9 @@ def insert_into_csv(total_people):
     with open(FILENAME, "a", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fields.fieldnames)
         for person in people:
+            current_hotel = generate_hotel()
             person_data = fields.person_data(person)
-            person_data.update(generate_hotel())
+            person_data.update(current_hotel)
             writer.writerow(person_data)
 
 
