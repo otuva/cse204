@@ -260,13 +260,13 @@ database_table_guest_reviews = """
         CREATE TABLE IF NOT EXISTS guest_reviews (
             review_id INTEGER PRIMARY KEY AUTOINCREMENT,
             guest_id INTEGER NOT NULL,
-            hotel_id INTEGER NOT NULL,
+            reservation_id INTEGER NOT NULL,
             rating INTEGER CHECK (rating >= 1 AND rating <= 5),
             review_title TEXT,
             review_text TEXT,
             review_date DATE NOT NULL,
             FOREIGN KEY (guest_id) REFERENCES guests(guest_id),
-            FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id)
+            FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
         );
     """
 
@@ -417,10 +417,14 @@ database_3nf_payments = """
     """
 
 database_3nf_guest_reviews = """
-        INSERT INTO guest_reviews (guest_id, hotel_id, rating, review_title, review_text, review_date)
+        INSERT INTO guest_reviews (guest_id, reservation_id, rating, review_title, review_text, review_date)
         SELECT DISTINCT 
             (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1),
-            (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1),
+            (SELECT reservation_id FROM reservations 
+                    WHERE guest_id = (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1) 
+                    AND hotel_id = (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1) 
+                    AND start_date = unnormalized_form.reservation_start_date 
+                    LIMIT 1),
             rating, 
             review_title,
             review_text,
