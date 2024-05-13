@@ -1,3 +1,5 @@
+import random
+
 person_fieldnames = [
     "gender",
     "title",
@@ -23,7 +25,7 @@ person_fieldnames = [
     # "sha256",
     "dob_date",
     "dob_age",
-    # "registered_date",
+    "anniversary_date",
     "phone",
     # "cell",
     "id_name",
@@ -94,7 +96,7 @@ def person_data(person):
         # "sha256": person["login"]["sha256"],
         "dob_date": person["dob"]["date"],
         "dob_age": person["dob"]["age"],
-        # "registered_date": person["registered"]["date"],
+        "anniversary_date": person["registered"]["date"][5:10] if random.randint(1200,42105532)%7==3 else "",
         "phone": person["phone"],
         # "cell": person["cell"],
         "id_name": person["id"]["name"],
@@ -181,6 +183,7 @@ database_table_guests = """
             phone TEXT,
             address_id INTEGER,
             date_of_birth TEXT,
+            anniversary_date TEXT,
             id_name TEXT,
             id_value TEXT,
             nationality TEXT,
@@ -293,6 +296,7 @@ database_unnormalized_form = """
             email TEXT,
             dob_date TEXT,
             dob_age INTEGER,
+            anniversary_date TEXT,
             phone TEXT,
             id_name TEXT,
             id_value TEXT,
@@ -347,10 +351,10 @@ database_3nf_hotel_addresses = """
 
 # gender, title
 database_3nf_guests = """
-        INSERT INTO guests (gender, title, first_name, last_name, email, phone, address_id, date_of_birth, id_name, id_value, nationality)
+        INSERT INTO guests (gender, title, first_name, last_name, email, phone, address_id, date_of_birth, anniversary_date, id_name, id_value, nationality)
         SELECT DISTINCT gender, title, first, last, email, phone, 
             (SELECT address_id FROM addresses WHERE street_number = unnormalized_form.street_number AND street_name = unnormalized_form.street_name LIMIT 1),
-            dob_date, id_name, id_value, nationality
+            dob_date, anniversary_date, id_name, id_value, nationality
         FROM unnormalized_form
         WHERE email IS NOT NULL;
     """
@@ -462,6 +466,7 @@ database_unnormalized_form_view = """
             g.email AS email,
             g.date_of_birth AS dob_date,
             (strftime('%Y', 'now') - strftime('%Y', g.date_of_birth)) - (strftime('%m-%d', 'now') < strftime('%m-%d', g.date_of_birth)) AS dob_age,
+            g.anniversary_date AS anniversary_date,
             g.phone AS phone,
             g.id_name AS id_name,
             g.id_value AS id_value,
