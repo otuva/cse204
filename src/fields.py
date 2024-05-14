@@ -577,3 +577,11 @@ database_3nf_reservation_guests_secondary = """
             WHERE rg.guest_id = data.guest_id AND rg.reservation_id = data.r2_reservation_id
         );
     """
+
+database_alter = """
+       ALTER TABLE unnormalized_form RENAME TO table_to_drop;
+    """
+
+database_drop = """
+       DROP TABLE table_to_drop;
+    """

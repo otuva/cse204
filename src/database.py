@@ -65,6 +65,9 @@ def normalize():
     cursor.execute(fields.database_3nf_reservation_guests_primary)
     cursor.execute(fields.database_3nf_reservation_guests_secondary)
 
+    cursor.execute(fields.database_alter)
+    cursor.execute(fields.database_drop)
+
     conn.commit()
     conn.close()
 
