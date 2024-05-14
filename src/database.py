@@ -21,6 +21,8 @@ def create_tables():
     cursor.execute(fields.database_table_guest_reviews)
     cursor.execute(fields.database_unnormalized_form)
 
+    cursor.execute(fields.database_table_reservation_guests)
+
     conn.commit()
     conn.close()
 
@@ -59,6 +61,9 @@ def normalize():
     cursor.execute(fields.database_3nf_payment_types)
     cursor.execute(fields.database_3nf_payments)
     cursor.execute(fields.database_3nf_guest_reviews)
+
+    cursor.execute(fields.database_3nf_reservation_guests_primary)
+    cursor.execute(fields.database_3nf_reservation_guests_secondary)
 
     conn.commit()
     conn.close()
