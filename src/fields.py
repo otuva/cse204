@@ -227,12 +227,10 @@ database_table_rooms = """
 database_table_reservations = """
         CREATE TABLE IF NOT EXISTS reservations (
             reservation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            guest_id INTEGER NOT NULL,
             hotel_id INTEGER NOT NULL,
             room_id INTEGER NOT NULL,
             start_date DATE NOT NULL,
             end_date DATE NOT NULL,
-            FOREIGN KEY (guest_id) REFERENCES guests(guest_id),
             FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id),
             FOREIGN KEY (room_id) REFERENCES rooms(room_id)
         );
@@ -386,9 +384,8 @@ database_3nf_rooms = """
     """
 
 database_3nf_reservations = """
-        INSERT INTO reservations (guest_id, hotel_id, room_id, start_date, end_date)
+        INSERT INTO reservations (hotel_id, room_id, start_date, end_date)
         SELECT DISTINCT 
-            (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1), 
             (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1),
             (SELECT room_id FROM rooms WHERE room_number = unnormalized_form.room_number AND hotel_id = (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1) LIMIT 1),
             reservation_start_date, reservation_end_date
@@ -407,8 +404,7 @@ database_3nf_payments = """
         INSERT INTO payments (reservation_id, payment_date, payment_type_id, payment_amount, transaction_id, notes)
         SELECT DISTINCT 
             (SELECT reservation_id FROM reservations 
-                WHERE guest_id = (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1) 
-                AND room_id = (SELECT room_id FROM rooms WHERE room_number = unnormalized_form.room_number LIMIT 1) 
+                WHERE room_id = (SELECT room_id FROM rooms WHERE room_number = unnormalized_form.room_number LIMIT 1) 
                 AND start_date = unnormalized_form.reservation_start_date 
                 LIMIT 1),
             payment_date, 
@@ -425,8 +421,7 @@ database_3nf_guest_reviews = """
         SELECT DISTINCT 
             (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1),
             (SELECT reservation_id FROM reservations 
-                    WHERE guest_id = (SELECT guest_id FROM guests WHERE email = unnormalized_form.email LIMIT 1) 
-                    AND hotel_id = (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1) 
+                    WHERE hotel_id = (SELECT hotel_id FROM hotels WHERE hotel_name = unnormalized_form.hotel_name LIMIT 1) 
                     AND start_date = unnormalized_form.reservation_start_date 
                     LIMIT 1),
             rating, 
@@ -501,7 +496,6 @@ database_unnormalized_form_view = """
         FROM
             guests g
             JOIN addresses a ON g.address_id = a.address_id
-            JOIN reservations res ON res.guest_id = g.guest_id
             JOIN rooms r ON res.room_id = r.room_id
             JOIN hotels h ON r.hotel_id = h.hotel_id
             JOIN addresses ha ON h.address_id = ha.address_id
@@ -509,4 +503,77 @@ database_unnormalized_form_view = """
             JOIN payments pmt ON res.reservation_id = pmt.reservation_id
             JOIN payment_types ptype ON pmt.payment_type_id = ptype.payment_type_id
             JOIN guest_reviews rv ON rv.guest_id = g.guest_id AND rv.hotel_id = h.hotel_id;
+    """
+
+# ------------------------------------------
+# --------------after-revision--------------
+# ------------------------------------------
+
+database_table_reservation_guests = """
+        CREATE TABLE IF NOT EXISTS reservation_guests (
+            reservation_guest_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reservation_id INTEGER NOT NULL,
+            guest_id INTEGER NOT NULL,
+            is_primary_guest BOOLEAN NOT NULL DEFAULT 0,
+            FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
+            FOREIGN KEY (guest_id) REFERENCES guests(guest_id)
+        );
+    """
+
+database_3nf_reservation_guests_primary = """
+        INSERT INTO reservation_guests(reservation_id, guest_id, is_primary_guest)
+        SELECT 
+            (SELECT r2.reservation_id 
+            FROM reservations r2
+            JOIN rooms rm2 ON r2.room_id = rm2.room_id
+            WHERE rm2.room_number = uf.room_number 
+            AND r2.start_date = uf.reservation_start_date 
+            AND r2.end_date = uf.reservation_end_date 
+            LIMIT 1) AS r2_reservation_id,
+            (SELECT g.guest_id 
+            FROM guests g 
+            WHERE g.email = uf.email
+            LIMIT 1) AS guest_id,
+            1
+        FROM 
+            unnormalized_form uf 
+        JOIN 
+            rooms rm ON uf.room_number = rm.room_number
+        JOIN 
+            hotels h ON rm.hotel_id = h.hotel_id
+        JOIN 
+            reservations r ON r.room_id = rm.room_id AND r.start_date = uf.reservation_start_date AND r.end_date = uf.reservation_end_date
+        GROUP BY r2_reservation_id;
+    """
+
+database_3nf_reservation_guests_secondary = """
+        INSERT INTO reservation_guests (reservation_id, guest_id, is_primary_guest)
+        SELECT r2_reservation_id, guest_id, 0
+        FROM (
+            SELECT 
+                (SELECT r2.reservation_id 
+                FROM reservations r2
+                JOIN rooms rm2 ON r2.room_id = rm2.room_id
+                WHERE rm2.room_number = uf.room_number 
+                AND r2.start_date = uf.reservation_start_date 
+                AND r2.end_date = uf.reservation_end_date 
+                LIMIT 1) AS r2_reservation_id,
+                (SELECT g.guest_id 
+                FROM guests g 
+                WHERE g.email = uf.email
+                LIMIT 1) AS guest_id
+            FROM 
+                unnormalized_form uf 
+            JOIN 
+                rooms rm ON uf.room_number = rm.room_number
+            JOIN 
+                hotels h ON rm.hotel_id = h.hotel_id
+            JOIN 
+                reservations r ON r.room_id = rm.room_id AND r.start_date = uf.reservation_start_date AND r.end_date = uf.reservation_end_date
+        ) AS data
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM reservation_guests rg
+            WHERE rg.guest_id = data.guest_id AND rg.reservation_id = data.r2_reservation_id
+        );
     """
