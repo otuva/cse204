@@ -21,7 +21,7 @@ random.seed(
 
 
 def generate_people(total_people):
-    URL = f"https://randomuser.me/api/?results={total_people}&exc=login,picture&seed=cse204"
+    URL = f"https://randomuser.me/api/?results={total_people}&exc=login,picture"
 
     content = requests.get(URL).content
     return json.loads(content)["results"]
@@ -31,8 +31,6 @@ def generate_hotel():
     random_hotel = random.choice(filler.hotels)
 
     # random_room_number = random.randint(100, 500)
-    
-
     # while random_room_number in existing_rooms:
     #     random_room_number = random.randint(100, 500)
     # existing_rooms.append(random_room_number)
@@ -83,9 +81,19 @@ def insert_into_csv(total_people):
         writer = csv.DictWriter(csvfile, fieldnames=fields.fieldnames)
         for person in people:
             current_hotel = generate_hotel()
+
             person_data = fields.person_data(person)
             person_data.update(current_hotel)
+
             writer.writerow(person_data)
+
+            if random.randint(0,4214543)%11==0:
+                additional_people = generate_people(random.randint(0,3))
+                for a_person in additional_people:
+                    person_data = fields.person_data(a_person)
+                    person_data.update(current_hotel)
+
+                    writer.writerow(person_data)
 
 
 def create_csv_file():
