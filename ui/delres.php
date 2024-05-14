@@ -38,6 +38,6 @@
         <button type="submit">Remove Reservation</button>
     </form>
     <div id="result"></div>
-<a href="/"><h1>\u2190 Go back</h1></a>
+<a href="/"><h1>← Go back</h1></a>
 </body>
 </html>

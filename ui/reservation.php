@@ -76,6 +76,6 @@
         }
     });
     </script>
-<a href="/"><h1>\u2190 Go back</h1></a>
+<a href="/"><h1>← Go back</h1></a>
 </body>
 </html>
