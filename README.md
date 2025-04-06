@@ -3,7 +3,7 @@
 ```bash
 git clone https://github.com/otuva/cse204
 cd cse204
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip -r requirements.txt
 ```
